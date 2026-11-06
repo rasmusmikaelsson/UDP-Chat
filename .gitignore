@@ -1,0 +1,6 @@
+# Executable
+udp-server
+udp-client
+
+# Compiled object files
+*.o
