@@ -1,6 +1,7 @@
 # Executable
 udp-server
 udp-client
+udp-chat
 
 # Compiled object files
 *.o
