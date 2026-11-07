@@ -11,8 +11,7 @@
 #define BUFSIZE 2048
 
 int main(int argc, char *argv[]) {
-    int client_fd, status;
-    struct sockaddr_in serv_addr;
+    int udp_socket, status;
 
     // Check commandline for correct usage
     if(argc != 3) {
@@ -21,24 +20,25 @@ int main(int argc, char *argv[]) {
     }
 
     // Create a socket for IPv4 UDP
-    if(((client_fd = socket(AF_INET, SOCK_DGRAM, 0))) == -1) {
-        perror("Socket");
+    if(((udp_socket = socket(AF_INET, SOCK_DGRAM, 0))) == -1) {
+        perror("socket()");
         return -1;
     }
 
     // Set up the server address structure
+    struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(atoi(argv[2]));
 
     // Convert IPv4 and IPv6 addresses from text to binary form
     if(inet_pton(AF_INET, argv[1], &serv_addr.sin_addr) == -1) {
-        perror("inet_pton failed");
+        perror("inet_pton()");
         return -1;
     }
 
     // Connect to the server
-    if((status = connect(client_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))) < 0) {
-        perror("connect failed");
+    if((status = connect(udp_socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr))) < 0) {
+        perror("connect()");
         return -1;
     }
 
@@ -51,12 +51,12 @@ int main(int argc, char *argv[]) {
             return -1;
         }
 
-        if(sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr*)NULL, sizeof(serv_addr)) == -1 ) {
+        if(sendto(udp_socket, buffer, strlen(buffer), 0, (struct sockaddr*)NULL, sizeof(serv_addr)) == -1 ) {
             perror("failed to send");
             return -1;
         }
 
-        ssize_t n = recvfrom(client_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+        ssize_t n = recvfrom(udp_socket, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
         if(n < 0) {
             perror("recvfrom");
             return -1;
