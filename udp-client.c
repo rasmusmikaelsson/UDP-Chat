@@ -43,26 +43,17 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Connected to server %s:%s\n", argv[1], argv[2]);
-    
+
     while(1) {
         char buffer[BUFSIZE];
+
         if(fgets(buffer, BUFSIZE, stdin) == NULL) {
-            fprintf(stderr, "failed to get input from user");
-            return -1;
+            break;
         }
 
-        if(sendto(udp_socket, buffer, strlen(buffer), 0, (struct sockaddr*)NULL, sizeof(serv_addr)) == -1 ) {
-            perror("failed to send");
+        if(send(udp_socket, buffer, strlen(buffer), 0) == -1) {
+            perror("send()");
             return -1;
         }
-
-        ssize_t n = recvfrom(udp_socket, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
-        if(n < 0) {
-            perror("recvfrom");
-            return -1;
-        }
-        
-        buffer[n] = '\0';
-        puts(buffer);
     }
 }

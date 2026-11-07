@@ -11,7 +11,7 @@
 
 static int send_data_udp(int socket_fd, const char *buffer, size_t length);
 
-static int udp_chat(int socket_fd) {
+static int udp_chat(int socket_fd, int port) {
     int stdin_open = 1;
 
     while(1) {
